@@ -9,7 +9,7 @@ import com.example.microservice.user.dto.user.UserRequestDTO;
 import com.example.microservice.user.dto.user.UserResponseDTO;
 import com.example.microservice.user.services.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 

@@ -13,16 +13,19 @@ import com.example.microservice.user.dto.generic.ErrorResponseDTO;
 @ControllerAdvice
 public class ExceptionEntityHandler {
     
+    @SuppressWarnings("rawtypes")
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity handleEventNotFound(NotFoundException e) {
         return ResponseEntity.notFound().build();
     }
 
+    @SuppressWarnings("rawtypes")
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity handleAttendeeAlreadyExist(ConflictException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponseDTO(e.getMessage()));
     }
 
+    @SuppressWarnings("rawtypes")
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity handleEventFull(BadRequestException e) {
         return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));

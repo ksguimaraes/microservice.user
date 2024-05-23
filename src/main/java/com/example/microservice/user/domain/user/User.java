@@ -38,12 +38,14 @@ public class User {
     private Status status;
 
     @Column(nullable = false, name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @Column(nullable = false, name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @Column(nullable = false, name = "deleted_at")
+    @Column(nullable = true, name = "deleted_at")
     private Date deletedAt;
 
     @OneToOne
@@ -62,4 +64,15 @@ public class User {
     @JoinColumn(name = "deleted_by_user_id")
     private User deletedByUser;
     
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
 }

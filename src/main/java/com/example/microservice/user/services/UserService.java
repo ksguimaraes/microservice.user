@@ -3,6 +3,7 @@ package com.example.microservice.user.services;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.microservice.user.config.exceptions.ConflictException;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final AddressService addressService;
+    private final PasswordEncoder passwordEncoder;
     
     public UserIdDTO createUser(UserRequestDTO userRequestDto) {
         if(this.userRepository.findByCpf(userRequestDto.cpf()).isPresent()) {
@@ -31,7 +33,7 @@ public class UserService {
 
         User newUser = new User();
         newUser.setCpf(userRequestDto.cpf());
-        newUser.setPassword(userRequestDto.password());
+        newUser.setPassword(passwordEncoder.encode(userRequestDto.password()));
         newUser.setName(userRequestDto.name());
         newUser.setBirthDate(userRequestDto.birthDate());
         newUser.setStatus(userRequestDto.status());
