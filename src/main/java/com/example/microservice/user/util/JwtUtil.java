@@ -16,17 +16,17 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String generateToken(String userId) {
+    public String generateToken(String cpf) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         return JWT.create()
-                .withSubject(userId)
+                .withSubject(cpf)
                 .sign(algorithm);
     }
 
-    public boolean validateToken(String token, String userId) {
+    public boolean validateToken(String token, String cpf) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
-            JWTVerifier verifier = JWT.require(algorithm).withSubject(userId).build();
+            JWTVerifier verifier = JWT.require(algorithm).withSubject(cpf).build();
             DecodedJWT jwt = verifier.verify(token);
 
             return !jwt.getExpiresAt().before(new Date());
@@ -35,7 +35,7 @@ public class JwtUtil {
         }
     }
 
-    public String extractUserId(String token) {
+    public String extractUsername(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);

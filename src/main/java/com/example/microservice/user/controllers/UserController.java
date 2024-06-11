@@ -23,7 +23,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserIdDTO> createUser(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder uriBuilder) {
-        System.out.println("Received request: " + userRequest);
         UserIdDTO userIdDto = this.userService.createUser(userRequest);
 
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userIdDto.userId()).toUri();

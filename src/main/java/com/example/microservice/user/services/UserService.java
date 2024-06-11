@@ -1,8 +1,14 @@
 package com.example.microservice.user.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService{
     private final UserRepository userRepository;
     private final AddressService addressService;
     private final PasswordEncoder passwordEncoder;
@@ -110,5 +116,26 @@ public class UserService {
         existingUser.setStatus(Status.Inativo);
     
         this.userRepository.save(existingUser);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
+        try {
+            Optional<User> optionalUser = this.userRepository.findByCpf(cpf);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                return new org.springframework.security.core.userdetails.User(
+                        user.getCpf(),
+                        user.getPassword(),
+                        Collections.emptyList());
+            } else {
+                throw new NotFoundException("User not found with cpf: " + cpf);
+            }
+        } catch (NotFoundException ex) {
+            throw new UsernameNotFoundException("User not found with cpf: " + cpf, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new InternalAuthenticationServiceException("Unexpected error during user retrieval", ex);
+        }
     }
 }
