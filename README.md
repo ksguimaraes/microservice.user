@@ -8,7 +8,6 @@
 4. [Funcionalidades](#funcionalidades)
 5. [Instalação](#instalação)
 6. [Executando o Projeto](#executando-o-projeto)
-7. [Testes](#testes)
 8. [Endpoints Principais](#endpoints-principais)
    - [Autenticação](#autenticação)
    - [Usuários](#usuários)
@@ -38,7 +37,6 @@ Este projeto foi desenvolvido como parte de um teste técnico, utilizando os pad
 - MySQL 🐬: Sistema de gerenciamento de banco de dados relacional.
 - Docker 🐳: Plataforma para criação e gerenciamento de contêineres.
 - Swagger 📚: Ferramenta para documentar APIs RESTful.
-- JUnit 🧪: Framework de testes em Java.
 
 ## Funcionalidades
 
@@ -77,23 +75,16 @@ Este projeto foi desenvolvido como parte de um teste técnico, utilizando os pad
    ```
 ![image](https://github.com/ksguimaraes/microservice.user/assets/39937365/da86d95f-c0b3-40bc-b1ae-ba99d582ed4b)
 
-## Testes
-
-Para executar os testes, utilize o comando:
-
-```sh
-mvn test
-```
 
 ## Endpoints Principais
 
 ### Autenticação
 
-- **POST /login**: Realiza a autenticação do usuário e retorna um token JWT.
+- **POST /auth/login**: Realiza a autenticação do usuário e retorna um token JWT.
 
 ### Usuários
 
-- **POST /users**: Cria um novo usuário.
-- **GET /users/:id**: Retorna os detalhes de um usuário específico.
-- **PUT /users/:id**: Atualiza os dados de um usuário.
-- **DELETE /users/:id**: Remove um usuário.
+- **POST /user**: Cria um novo usuário.
+- **GET /user/:id**: Retorna os detalhes de um usuário específico.
+- **PUT /user/:id**: Atualiza os dados de um usuário.
+- **DELETE /user/:id**: Remove um usuário.
