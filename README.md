@@ -55,7 +55,7 @@ Este projeto foi desenvolvido como parte de um teste técnico, utilizando os pad
    ```
 2. Navegue até o diretório do projeto:
    ```sh
-   cd user-api
+   cd microservice.user
    ```
 3. Configure o banco de dados no arquivo `application.properties`:
    ```properties
@@ -75,6 +75,7 @@ Este projeto foi desenvolvido como parte de um teste técnico, utilizando os pad
    ```
    http://localhost:8080/swagger-ui.html
    ```
+![image](https://github.com/ksguimaraes/microservice.user/assets/39937365/da86d95f-c0b3-40bc-b1ae-ba99d582ed4b)
 
 ## Testes
 
