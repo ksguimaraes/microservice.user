@@ -63,9 +63,9 @@ public class UserService implements UserDetailsService{
             user.getCreatedAt(),
             user.getUpdatedAt(),
             user.getDeletedAt(),
-            user.getCreatedByUser().getId(),
-            user.getUpdatedByUser().getId(),
-            user.getDeletedByUser().getId()
+            user.getCreatedByUser() != null ? user.getCreatedByUser().getId() : null,
+            user.getUpdatedByUser() != null ?  user.getUpdatedByUser().getId() : null,
+            user.getDeletedByUser() != null ? user.getDeletedByUser().getId() : null
         );
     }
 

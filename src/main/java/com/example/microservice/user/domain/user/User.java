@@ -1,6 +1,7 @@
 package com.example.microservice.user.domain.user;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -83,31 +84,31 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return Collections.emptyList();
     }
 
     @Override
     public String getUsername() {
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+        return this.cpf;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+        return this.status == Status.Ativo;
     }
 }
