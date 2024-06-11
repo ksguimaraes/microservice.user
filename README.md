@@ -51,7 +51,7 @@ Este projeto foi desenvolvido como parte de um teste técnico, utilizando os pad
 
 1. Clone o repositório:
    ```sh
-   git clone https://github.com/ksguimaraes/user-api.git
+   git clone https://github.com/ksguimaraes/microservice.user.git
    ```
 2. Navegue até o diretório do projeto:
    ```sh
