@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.example.microservice.user.config.exceptions.NotFoundException;
 import com.example.microservice.user.domain.address.Address;
 import com.example.microservice.user.dto.address.AddressRequestDTO;
+import com.example.microservice.user.dto.address.AddressUpdateRequestDTO;
 import com.example.microservice.user.repositories.AddressRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class AddressService {
         Address newAddress = new Address();
         newAddress.setStreet(addressRequestDto.street());
         newAddress.setNumber(addressRequestDto.number());
-        newAddress.setComplement(addressRequestDto.complement());
+        addressRequestDto.complement().ifPresent(newAddress::setComplement);
         newAddress.setNeighborhood(addressRequestDto.neighborhood());
         newAddress.setCity(addressRequestDto.city());
         newAddress.setState(addressRequestDto.state());
@@ -29,19 +30,19 @@ public class AddressService {
         return newAddress;
     }
 
-    public Address updateAddress(String addressId, AddressRequestDTO addressRequestDto) {
+    public Address updateAddress(String addressId, AddressUpdateRequestDTO addressRequestDto) {
         Address address = this.addressRepository.findById(addressId).orElseThrow(() -> new NotFoundException("Address not found with id: " + addressId));
-
-        address.setStreet(addressRequestDto.street());
-        address.setNumber(addressRequestDto.number());
-        address.setComplement(addressRequestDto.complement());
-        address.setNeighborhood(addressRequestDto.neighborhood());
-        address.setCity(addressRequestDto.city());
-        address.setState(addressRequestDto.state());
-        address.setZipCode(addressRequestDto.zipCode());
-
+    
+        addressRequestDto.street().ifPresent(address::setStreet);
+        addressRequestDto.number().ifPresent(address::setNumber);
+        addressRequestDto.complement().ifPresent(address::setComplement);
+        addressRequestDto.neighborhood().ifPresent(address::setNeighborhood);
+        addressRequestDto.city().ifPresent(address::setCity);
+        addressRequestDto.state().ifPresent(address::setState);
+        addressRequestDto.zipCode().ifPresent(address::setZipCode);
+    
         this.addressRepository.save(address);
-
+    
         return address;
-    }
+    }    
 }

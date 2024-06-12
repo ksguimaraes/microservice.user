@@ -18,6 +18,7 @@ public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @SuppressWarnings("deprecation")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -26,7 +27,7 @@ public class SecurityConfig {
             .authorizeRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/user").permitAll()
                     .anyRequest().authenticated()
             )

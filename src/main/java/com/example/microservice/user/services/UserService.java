@@ -1,6 +1,5 @@
 package com.example.microservice.user.services;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
@@ -18,6 +17,7 @@ import com.example.microservice.user.domain.address.Address;
 import com.example.microservice.user.domain.user.User;
 import com.example.microservice.user.domain.user.status.Status;
 import com.example.microservice.user.dto.user.UserResponseDTO;
+import com.example.microservice.user.dto.user.UserUpdateRequestDTO;
 import com.example.microservice.user.dto.user.UserIdDTO;
 import com.example.microservice.user.dto.user.UserRequestDTO;
 import com.example.microservice.user.repositories.UserRepository;
@@ -31,11 +31,12 @@ public class UserService implements UserDetailsService{
     private final AddressService addressService;
     private final PasswordEncoder passwordEncoder;
     
-    public UserIdDTO createUser(UserRequestDTO userRequestDto) {
+    public UserIdDTO createUser(UserRequestDTO userRequestDto, String cpfLogged) {
         if(this.userRepository.findByCpf(userRequestDto.cpf()).isPresent()) {
             throw new ConflictException("User already exists with cpf: " + userRequestDto.cpf());
         }
         Address address = this.addressService.createAddress(userRequestDto.address());
+        Optional<User> userLogged = this.userRepository.findByCpf(cpfLogged);
 
         User newUser = new User();
         newUser.setCpf(userRequestDto.cpf());
@@ -44,6 +45,7 @@ public class UserService implements UserDetailsService{
         newUser.setBirthDate(userRequestDto.birthDate());
         newUser.setStatus(userRequestDto.status());
         newUser.setAddress(address);
+        newUser.setCreatedByUser(userLogged.orElse(null));
         
         this.userRepository.save(newUser);
 
@@ -69,28 +71,37 @@ public class UserService implements UserDetailsService{
         );
     }
 
-    public UserResponseDTO updateUser(String userId, UserRequestDTO userRequestDto) {
-        User existingUser = this.userRepository.findById(userId).orElseThrow(() -> 
+    public UserResponseDTO updateUser(String userId, UserUpdateRequestDTO userRequestDto, String cpfLogged) {
+        User existingUser = this.userRepository.findById(userId).orElseThrow(() ->
             new NotFoundException("User not found with id: " + userId)
         );
     
-        Optional<User> userWithCpfOptional = this.userRepository.findByCpf(userRequestDto.cpf());
-        if (userWithCpfOptional.isPresent() && !userWithCpfOptional.get().getId().equals(userId)) {
-            throw new ConflictException("User already exists with cpf: " + userRequestDto.cpf());
+        if (userRequestDto.cpf().isPresent()) {
+            String cpf = userRequestDto.cpf().get();
+            Optional<User> userWithCpfOptional = this.userRepository.findByCpf(cpf);
+            if (userWithCpfOptional.isPresent() && !userWithCpfOptional.get().getId().equals(userId)) {
+                throw new ConflictException("User already exists with cpf: " + cpf);
+            }
+            existingUser.setCpf(cpf);
         }
     
-        Address updatedAddress = this.addressService.updateAddress(existingUser.getAddress().getId(), userRequestDto.address());
+        Optional<User> userLogged = this.userRepository.findByCpf(cpfLogged);
     
-        existingUser.setCpf(userRequestDto.cpf());
-        existingUser.setPassword(userRequestDto.password());
-        existingUser.setName(userRequestDto.name());
-        existingUser.setBirthDate(userRequestDto.birthDate());
-        existingUser.setStatus(userRequestDto.status());
-        existingUser.setAddress(updatedAddress);
+        if (userRequestDto.address().isPresent()) {
+            Address updatedAddress = this.addressService.updateAddress(existingUser.getAddress().getId(), userRequestDto.address().get());
+            existingUser.setAddress(updatedAddress);
+        }
+    
+        userRequestDto.password().ifPresent(existingUser::setPassword);
+        userRequestDto.name().ifPresent(existingUser::setName);
+        userRequestDto.birthDate().ifPresent(existingUser::setBirthDate);
+        userRequestDto.status().ifPresent(existingUser::setStatus);
+    
         existingUser.setUpdatedAt(new Date());
+        existingUser.setUpdatedByUser(userLogged.orElse(null));
     
         this.userRepository.save(existingUser);
-        
+    
         return new UserResponseDTO(
             existingUser.getId(),
             existingUser.getCpf(),
@@ -101,19 +112,21 @@ public class UserService implements UserDetailsService{
             existingUser.getCreatedAt(),
             existingUser.getUpdatedAt(),
             existingUser.getDeletedAt(),
-            existingUser.getCreatedByUser().getId(),
-            existingUser.getUpdatedByUser().getId(),
-            existingUser.getDeletedByUser().getId()
+            existingUser.getCreatedByUser() != null ? existingUser.getCreatedByUser().getId() : null,
+            existingUser.getUpdatedByUser() != null ? existingUser.getUpdatedByUser().getId() : null,
+            existingUser.getDeletedByUser() != null ? existingUser.getDeletedByUser().getId() : null
         );
-    }
+    }   
 
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId, String cpfLogged) {
         User existingUser = this.userRepository.findById(userId).orElseThrow(() -> 
             new NotFoundException("User not found with id: " + userId)
         );
-    
+        Optional<User> userLogged = this.userRepository.findByCpf(cpfLogged);
+
         existingUser.setDeletedAt(new Date());
         existingUser.setStatus(Status.Inativo);
+        existingUser.setDeletedByUser(userLogged.orElse(null));
     
         this.userRepository.save(existingUser);
     }

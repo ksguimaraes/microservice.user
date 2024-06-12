@@ -1,9 +1,11 @@
 package com.example.microservice.user.dto.address;
 
+import java.util.Optional;
+
 public record AddressRequestDTO(
     String street,
     Integer number,
-    String complement,
+    Optional<String> complement,
     String neighborhood,
     String city,
     String state,
